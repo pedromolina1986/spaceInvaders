@@ -121,7 +121,10 @@ static void setup() {
 }
 
 static void draw() {
-    system("cls");
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD cursorPosition = { 0, 0 };
+    SetConsoleCursorPosition(hConsole, cursorPosition);
 
     //print movement
     cout << ANSI_COLOR_CYAN << "a <- MOVE LEFT" << endl;
@@ -142,7 +145,7 @@ static void draw() {
     }        
 
     // Draw player
-    screen[currentPlayer.y][currentPlayer.x] = 'T';
+    screen[currentPlayer.y][currentPlayer.x] = '^';
 
     // Draw bullets
     for (auto& b : bullets) {
@@ -275,7 +278,8 @@ int main() {
     while (!gameOver) {
         draw();
         input();
-        update();        
+        update();   
+        Sleep(20);
     }
     maxPoints = currentPlayer.points;
     dialogScreen("GAME OVER!!! THANKS FOR PLAYING!!!");    
