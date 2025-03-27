@@ -1,0 +1,7 @@
+﻿  FinalProject.cpp
+C:\Users\phkmo\source\repos\FinalProject\FinalProject\FinalProject.cpp(85,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\FinalProject\FinalProject\FinalProject.cpp(86,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\FinalProject\FinalProject\FinalProject.cpp(87,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\FinalProject\FinalProject\FinalProject.cpp(88,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\FinalProject\FinalProject\FinalProject.cpp(89,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+  FinalProject.vcxproj -> C:\Users\phkmo\source\repos\FinalProject\x64\Debug\FinalProject.exe
