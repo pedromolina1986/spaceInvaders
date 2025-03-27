@@ -265,7 +265,7 @@ static void update() {
     }
 }
 
-
+//main gaming function
 int main() {
 
     setup();    
