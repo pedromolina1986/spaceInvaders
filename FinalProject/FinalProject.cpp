@@ -47,11 +47,18 @@ struct Enemy {
     bool alive;    
 };
 
+struct Spaceship {
+    char printingType;
+    string name;
+};
+
 struct Player {    
     int lifes = 3;
     int points = 0;
     int x = width / 2;
     int y = height - 2;
+    string name = "";    
+    Spaceship SpaceshipType;
 };
 
 struct EnemyBullet {
@@ -64,7 +71,10 @@ struct EnemyBullet {
 vector<Bullet> bullets;
 vector<EnemyBullet> enemyBullets;
 vector<Enemy> enemies;
+vector<Player> players;
+vector<Spaceship> spaceships;
 Player currentPlayer;
+
 
 //gaming controller variables
 bool gameOver = false;
@@ -74,6 +84,104 @@ int enemiesCount = 0;
 
 //END - GLOBAL VARIABLES
 
+//START - spacehisps controlle
+void genSpaceships() {
+    spaceships.push_back({ '^', "Destroyer" });
+    spaceships.push_back({ 'T', "T-Fighter" });
+    spaceships.push_back({ 'A', "A-Forcce" });
+    spaceships.push_back({ 'V', "Voyager" });
+    spaceships.push_back({ '8', "8Ball" });
+}
+
+vector<Spaceship> getSpaceships(string name) {
+    vector<Spaceship> retShips;
+    for (auto& ship : spaceships) {
+        if (ship.name == name) {
+            retShips.push_back(ship);
+        }
+    }
+    return(retShips);
+}
+
+Spaceship getSpaceshipByName(string name) {
+    vector<Spaceship> retShips;
+    for (auto& ship : spaceships) {
+        if (ship.name == name) {
+            return(ship);
+        }
+    }    
+}
+
+void printSpaceships() {
+    int x = 1;
+    string typingString = "";
+    for (auto& ship : spaceships) {        
+        cout << x << ". " << ship.printingType << " - " << ship.name << endl;
+        x++;
+    }
+}
+
+//END - spacehisps controlle
+
+//START - Player controller
+void playerRegistration() {
+
+    /*
+    int lifes = 3;
+    int points = 0;
+    int x = width / 2;
+    int y = height - 2;
+    string name = "";
+    Spaceship SpaceshipType;        
+    */
+
+    //create a new player
+    system("cls");
+    players.push_back({
+        3,
+        0,
+        width / 2,
+        height - 2,
+        "Player 1",
+        getSpaceshipByName("T-Fighter")
+    });
+
+    Player newPlayer = players.back();
+    int sleepTime = 500;
+
+    cout << "Hurry UP!" << endl << endl;
+    Sleep(sleepTime);
+    cout << "Space invaders are coming to EARTH!" << endl << endl;
+    Sleep(sleepTime);
+    cout << "HELP US to defend our land and join our TEAM!" << endl;
+    Sleep(sleepTime);
+    cout << ".";
+    Sleep(sleepTime);
+    cout << ".";
+    Sleep(sleepTime);
+    cout << ".";
+    Sleep(sleepTime);
+    cout << endl << "What is your name DEFENDER:" << endl;
+    cin >> newPlayer.name;
+    cout << endl << endl << "LET's FIGHT " << newPlayer.name << "!!!!" << endl << endl;
+    Sleep(sleepTime);
+    cout << "Now pick you SPACESHIP:" << endl << endl;
+    int spacePick = 0;    
+    do { 
+        printSpaceships();
+        cin >> spacePick; 
+        if (!(spacePick >= 0 && spacePick <= spaceships.size())) {
+            cout << endl << "COME ON FIGHTER!!! Pick a better SPACESHIP:" << endl << endl;
+        }
+    } while (!(spacePick >= 0 && spacePick <= spaceships.size()));    
+
+    newPlayer.SpaceshipType = spaceships[spacePick-1];
+
+    players.push_back(newPlayer);
+}
+//END - Player controller
+
+//START - GAME controller
 static void dialogScreen(string text) {
     //clear screen
     system("cls");
@@ -82,32 +190,33 @@ static void dialogScreen(string text) {
     std::cout << "\n";
     std::cout << "\n";
     std::cout << "\n";
-    std::cout << ANSI_COLOR_GREEN << "  ███████  ██████   █████   ██████  ███████     ██ ███    ██ ██  ██ ███████ ██████   ███████ ███████ ███████"<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "  ██       ██  ██  ██   ██ ██       ██          ██ ████   ██ ██  ██ ██   ██ ██    ██ ██      ██    █ ██     "<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "  ███████  ██████  ███████ ██       █████       ██ ██ ██  ██ ██  ██ ███████ ██    ██ ████    ███████ ███████"<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "       ██  ██      ██   ██ ██       ██          ██ ██  ██ ██ ██  ██ ██   ██ ██    ██ ██      ██ ██        ██"<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "  ███████  ██      ██   ██  ██████  ███████     ██ ██   ████   ██   ██   ██ ██████   ███████ ██   ██ ███████"<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "                                                                                                            "<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "                                                                                                            "<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_GREEN << "                                                                                                            "<< ANSI_COLOR_GREEN  << "\n";
-    std::cout << ANSI_COLOR_RED << text <<"                                                                                                     "<< ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "  ███████  ██████   █████   ██████  ███████     ██ ███    ██ ██  ██ ███████ ██████   ███████ ███████ ███████" << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "  ██       ██  ██  ██   ██ ██       ██          ██ ████   ██ ██  ██ ██   ██ ██    ██ ██      ██    █ ██     " << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "  ███████  ██████  ███████ ██       █████       ██ ██ ██  ██ ██  ██ ███████ ██    ██ ████    ███████ ███████" << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "       ██  ██      ██   ██ ██       ██          ██ ██  ██ ██ ██  ██ ██   ██ ██    ██ ██      ██ ██        ██" << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "  ███████  ██      ██   ██  ██████  ███████     ██ ██   ████   ██   ██   ██ ██████   ███████ ██   ██ ███████" << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "                                                                                                            " << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "                                                                                                            " << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_GREEN << "                                                                                                            " << ANSI_COLOR_GREEN << "\n";
+    std::cout << ANSI_COLOR_RED << text << "                                                                                                     " << ANSI_COLOR_GREEN << "\n";
     if (currentPlayer.points > 0) {
         std::cout << "SCORE:" << currentPlayer.points << "\n";
-    }    
+    }
     std::cout << "\n";
     std::cout << "\n";
- 
+
     //PRESS ANY BUTTON
     char ret = _getch();
 }
 
-static void setup() {
+static void setup() {         
     //clear screend and variables
     system("cls");
     bullets.clear();
     enemyBullets.clear();
     enemies.clear();
     enemiesCount = 0;
+    currentPlayer = players.back();
 
     // Create enemies according level
     for (int x = 2; x < width - 2; x += 4) {
@@ -120,6 +229,13 @@ static void setup() {
 
 }
 
+void printSizeTable(int size) {
+    for (int i = 0; i < size; i++)
+    {
+        cout << "=";
+    };
+}
+
 static void draw() {
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -127,14 +243,20 @@ static void draw() {
     SetConsoleCursorPosition(hConsole, cursorPosition);
 
     //print movement
-    cout << ANSI_COLOR_CYAN << "a <- MOVE LEFT" << endl;
-    cout << "b -> MOMVE RIGHT" << endl;
-    cout << "SPACE to shoot " << endl << endl;
+    cout << ANSI_COLOR_CYAN;
+    cout << "A     | <- MOVE LEFT" << endl;
+    cout << "B     | -> MOVE RIGHT" << endl;
+    cout << "SPACE | SHOOT" << endl << endl;
 
     //print level and points
-    cout << "LEVEL " << level << endl;
-    cout << "SCORE - " << currentPlayer.points << endl;
-    cout << "LIFE  - " << currentPlayer.lifes << endl;
+    printSizeTable(currentPlayer.name.length() + 12);
+    cout << endl;
+    cout << "  FIGHTER |" << currentPlayer.name << endl;
+    cout << "  LEVEL   |" << level << endl;    
+    cout << "  SCORE   |" << currentPlayer.points << endl;
+    cout << "  LIFE    |" << currentPlayer.lifes << endl;
+    printSizeTable(currentPlayer.name.length() + 12);
+    cout << endl;
     
 
     // Clear screen buffer
@@ -145,7 +267,7 @@ static void draw() {
     }        
 
     // Draw player
-    screen[currentPlayer.y][currentPlayer.x] = '^';
+    screen[currentPlayer.y][currentPlayer.x] = currentPlayer.SpaceshipType.printingType;
 
     // Draw bullets
     for (auto& b : bullets) {
@@ -267,13 +389,20 @@ static void update() {
         setup();        
     }
 }
+//END - Game controller
 
 //main gaming function
 int main() {
 
-    setup();    
+    dialogScreen("PRESS ANY BUTTON TO START");
 
-    dialogScreen("LEVEL 1 - PRESS ANY BUTTON TO START");
+    //Spaceships types generator
+    genSpaceships();
+
+    //create player
+    playerRegistration();
+
+    setup();        
     
     while (!gameOver) {
         draw();
