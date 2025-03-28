@@ -17,6 +17,7 @@ Ansi colors: Googled "C++ how to give color in the cout" https://stackoverflow.c
 #include <conio.h>
 #include <windows.h>
 #include <vector>
+#include <string>
 
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_GREEN "\x1b[32m"
@@ -53,11 +54,11 @@ struct Spaceship {
 };
 
 struct Player {    
-    int lifes = 3;
-    int points = 0;
-    int x = width / 2;
-    int y = height - 2;
-    string name = "";    
+    int lifes;
+    int points;
+    int x;
+    int y;
+    string name;    
     Spaceship SpaceshipType;
 };
 
@@ -81,11 +82,12 @@ bool gameOver = false;
 int level = 0;
 int maxPoints = 0;
 int enemiesCount = 0;
+int topScore = 0;
 
 //END - GLOBAL VARIABLES
 
 //START - spacehisps controlle
-void genSpaceships() {
+static void genSpaceships() {
     spaceships.push_back({ '^', "Destroyer" });
     spaceships.push_back({ 'T', "T-Fighter" });
     spaceships.push_back({ 'A', "A-Forcce" });
@@ -93,7 +95,7 @@ void genSpaceships() {
     spaceships.push_back({ '8', "8Ball" });
 }
 
-vector<Spaceship> getSpaceships(string name) {
+static vector<Spaceship> getSpaceships(string name) {
     vector<Spaceship> retShips;
     for (auto& ship : spaceships) {
         if (ship.name == name) {
@@ -103,7 +105,7 @@ vector<Spaceship> getSpaceships(string name) {
     return(retShips);
 }
 
-Spaceship getSpaceshipByName(string name) {
+static Spaceship getSpaceshipByName(string name) {
     vector<Spaceship> retShips;
     for (auto& ship : spaceships) {
         if (ship.name == name) {
@@ -112,7 +114,7 @@ Spaceship getSpaceshipByName(string name) {
     }    
 }
 
-void printSpaceships() {
+static void printSpaceships() {
     int x = 1;
     string typingString = "";
     for (auto& ship : spaceships) {        
@@ -124,7 +126,7 @@ void printSpaceships() {
 //END - spacehisps controlle
 
 //START - Player controller
-void playerRegistration() {
+static void playerRegistration() {
 
     /*
     int lifes = 3;
@@ -132,21 +134,13 @@ void playerRegistration() {
     int x = width / 2;
     int y = height - 2;
     string name = "";
-    Spaceship SpaceshipType;        
+    Spaceship SpaceshipType;
     */
 
     //create a new player
     system("cls");
-    players.push_back({
-        3,
-        0,
-        width / 2,
-        height - 2,
-        "Player 1",
-        getSpaceshipByName("T-Fighter")
-    });
 
-    Player newPlayer = players.back();
+    Player newPlayer;
     int sleepTime = 500;
 
     cout << "Hurry UP!" << endl << endl;
@@ -162,26 +156,105 @@ void playerRegistration() {
     cout << ".";
     Sleep(sleepTime);
     cout << endl << "What is your name DEFENDER:" << endl;
-    cin >> newPlayer.name;
+    cin.clear();    
+    getline(cin, newPlayer.name);
     cout << endl << endl << "LET's FIGHT " << newPlayer.name << "!!!!" << endl << endl;
     Sleep(sleepTime);
     cout << "Now pick you SPACESHIP:" << endl << endl;
-    int spacePick = 0;    
-    do { 
+    int spacePick = 0;
+    do {
         printSpaceships();
-        cin >> spacePick; 
+        cin >> spacePick;
         if (!(spacePick >= 0 && spacePick <= spaceships.size())) {
             cout << endl << "COME ON FIGHTER!!! Pick a better SPACESHIP:" << endl << endl;
         }
-    } while (!(spacePick >= 0 && spacePick <= spaceships.size()));    
+    } while (!(spacePick >= 0 && spacePick <= spaceships.size()));
 
-    newPlayer.SpaceshipType = spaceships[spacePick-1];
+    newPlayer.SpaceshipType = spaceships[spacePick - 1];
+    newPlayer.lifes = 3;
+    newPlayer.points = 0;
+    newPlayer.x = width / 2;
+    newPlayer.y = height - 2;
 
     players.push_back(newPlayer);
-}
+};
 //END - Player controller
 
 //START - GAME controller
+// Function to perform Bubble Sort on players based on points socred.
+static void sortRanking(bool ascending) {
+
+    bool allowSwap = false;
+
+    int iterarions = players.size();
+
+    for (int i = 0; i < iterarions - 1; i++)
+    {
+        allowSwap = false;
+        for (int j = i; j < iterarions; j++)
+        {
+            if (ascending) {
+                if (players[i].points > players[j].points) {
+                    allowSwap = true;
+                }
+            }
+            else {
+                if (players[i].points < players[j].points) {
+                    allowSwap = true;
+                }
+            }
+            if (allowSwap) {
+                swap(players[j], players[i]);
+                allowSwap = false;
+            }
+
+        }
+    };
+}
+
+static void printScoreRanking() {
+    
+    //sort rank
+    sortRanking(0);
+
+    //print rank
+    cout << "POWER RANKING" << endl;
+    for (auto& player : players) {        
+        cout << " | " + player.name.substr(0, 15) << " | " << player.points << " | ";
+        cout << player.SpaceshipType.name << "(" << player.SpaceshipType.printingType << ")" << endl;
+    }
+    topScore = players[0].points;
+}
+
+void printSizeTable(int size) {
+    for (int i = 0; i < size; i++)
+    {
+        cout << "=";
+    };
+}
+
+static void setup() {
+    //clear screend and variables
+    system("cls");
+    bullets.clear();
+    enemyBullets.clear();
+    enemies.clear();
+    enemiesCount = 0;
+    if (level == 0) {
+        currentPlayer = players.back();
+    }
+
+    // Create enemies according level
+    for (int x = 2; x < width - 2; x += 4) {
+        for (int y = 2; y < level + 2; y++) {
+            enemies.push_back({ x, y, true });
+            //created to optimize the screen update
+            enemiesCount++;
+        }
+    }
+
+}
+
 static void dialogScreen(string text) {
     //clear screen
     system("cls");
@@ -199,42 +272,32 @@ static void dialogScreen(string text) {
     std::cout << ANSI_COLOR_GREEN << "                                                                                                            " << ANSI_COLOR_GREEN << "\n";
     std::cout << ANSI_COLOR_GREEN << "                                                                                                            " << ANSI_COLOR_GREEN << "\n";
     std::cout << ANSI_COLOR_RED << text << "                                                                                                     " << ANSI_COLOR_GREEN << "\n";
-    if (currentPlayer.points > 0) {
-        std::cout << "SCORE:" << currentPlayer.points << "\n";
+    if (players.size() > 0) {
+        printScoreRanking();
     }
     std::cout << "\n";
     std::cout << "\n";
 
-    //PRESS ANY BUTTON
-    char ret = _getch();
+    //PRESS ANY BUTTON    
+    char ret;
+    if (gameOver) {
+        do {
+            ret = _getch();
+            if (ret == 'y' || ret == 'Y') {
+                //reset the game
+                gameOver = false;
+                level = 0;
+                maxPoints = 0;
+                playerRegistration();
+                setup();
+            }
+        } while (ret != 'y' && ret != 'Y' && ret != 'e' && ret != 'E');
+    }
+    else {
+        ret = _getch();
+    }
 }
 
-static void setup() {         
-    //clear screend and variables
-    system("cls");
-    bullets.clear();
-    enemyBullets.clear();
-    enemies.clear();
-    enemiesCount = 0;
-    currentPlayer = players.back();
-
-    // Create enemies according level
-    for (int x = 2; x < width - 2; x += 4) {
-        for (int y = 2; y < level + 2; y++) {
-            enemies.push_back({ x, y, true });
-            //created to optimize the screen update
-            enemiesCount++;
-        }
-    }   
-
-}
-
-void printSizeTable(int size) {
-    for (int i = 0; i < size; i++)
-    {
-        cout << "=";
-    };
-}
 
 static void draw() {
 
@@ -244,17 +307,19 @@ static void draw() {
 
     //print movement
     cout << ANSI_COLOR_CYAN;
-    cout << "A     | <- MOVE LEFT" << endl;
-    cout << "B     | -> MOVE RIGHT" << endl;
-    cout << "SPACE | SHOOT" << endl << endl;
+    cout << "A MOVE LEFT |";
+    cout << "B MOVE RIGHT|";
+    cout << "SPACE TO SHOOT | DO NOT DIE!!!" << endl << endl;    
+
+    cout << "|TOP SCORE | " << topScore << endl;
 
     //print level and points
     printSizeTable(currentPlayer.name.length() + 12);
     cout << endl;
-    cout << "  FIGHTER |" << currentPlayer.name << endl;
-    cout << "  LEVEL   |" << level << endl;    
-    cout << "  SCORE   |" << currentPlayer.points << endl;
-    cout << "  LIFE    |" << currentPlayer.lifes << endl;
+    cout << "  FIGHTER   | " << currentPlayer.name << endl;
+    cout << "  LEVEL     | " << level << endl;    
+    cout << "  SCORE     | " << currentPlayer.points << endl;
+    cout << "  LIFE      | " << currentPlayer.lifes << endl;    
     printSizeTable(currentPlayer.name.length() + 12);
     cout << endl;
     
@@ -307,48 +372,22 @@ static void draw() {
 static void input() {
     if (_kbhit()) {
         switch (_getch()) {
-        case 'a': if (currentPlayer.x > 0) currentPlayer.x = currentPlayer.x - 1; break;
-        case 'd': if (currentPlayer.x < width - 1) currentPlayer.x = currentPlayer.x + 1; break;
-        case ' ': 
-            bullets.push_back({ currentPlayer.x, height - 3, true });             
-            break;
-        case 'q': gameOver = true; break;        
+            case 'a': if (currentPlayer.x > 0) currentPlayer.x = currentPlayer.x - 1; break;
+            case 'd': if (currentPlayer.x < width - 1) currentPlayer.x = currentPlayer.x + 1; break;
+            case ' ': 
+                bullets.push_back({ currentPlayer.x, height - 3, true });             
+                break;
+            case 'q': gameOver = true; break;     
         }
     }
 }
 
 static void update() {    
+
     // Move bullets
     int x = 0;
     for (auto& b : bullets) {
         b.y--;        
-        if (b.y < 0) {            
-            bullets.erase(bullets.begin() + x);
-            x--;
-            if (x == 0) {
-                bullets.clear();
-            }
-        };
-        x++;
-     }
-
-    x = 0;
-    for (auto& eb : enemyBullets) {
-        if (eb.active) {
-            eb.y++;
-            if (eb.y > height - 2) {
-                enemyBullets.erase(enemyBullets.begin() + x);
-                x--;
-                if (x == 0) {
-                    enemyBullets.clear();
-                }
-            };
-            x++;
-        }
-    }
-
-    // Check bullet-enemy collision
-    for (auto& b : bullets) {
         for (auto& e : enemies) {
             if (e.alive && b.active && b.x == e.x && b.y == e.y) {
                 e.alive = false;
@@ -357,21 +396,33 @@ static void update() {
                 maxPoints = maxPoints + 50;
                 //every time an enemy is defeated 1*level enemy bullets is shotted
                 enemiesCount = enemiesCount - 1;
-                enemyBullets.push_back({ e.x, 2, true });                
-                enemyBullets.push_back({ e.x / 2 , 2, true });                                                                    
+                enemyBullets.push_back({ e.x, 2, true });
+                enemyBullets.push_back({ e.x / 2 , 2, true });
             }
         }
-    }
+        if (b.y < 0) {            
+            bullets.erase(bullets.begin() + x);
+            x--;            
+        };
+        x++;
+    }    
 
-    // Check enemy bullet - player collision
+    x = 0;
     for (auto& eb : enemyBullets) {
-        
-            if (eb.active && currentPlayer.x == eb.x && eb.y == currentPlayer.y) {
+        if (eb.active) {
+            eb.y++;
+            if (currentPlayer.x == eb.x && eb.y == currentPlayer.y) {
                 currentPlayer.lifes = currentPlayer.lifes - 1;
-                currentPlayer.points = currentPlayer.points - 100;                
-            }        
-    }
-
+                currentPlayer.points = currentPlayer.points - 100;
+            }            
+            if (eb.y > height - 2) {
+                enemyBullets.erase(enemyBullets.begin() + x);
+                x--;               
+            };
+            x++;
+        }
+    }    
+    
     //Life up each 1000 points
     if (maxPoints % 1000 == 0 && maxPoints > 0) {
         currentPlayer.lifes = currentPlayer.lifes + 1;
@@ -380,6 +431,7 @@ static void update() {
 
     //Game over if life gets zero
     if (currentPlayer.lifes <= 0) {
+        players[players.size() - 1] = currentPlayer;
         gameOver = true;
     };
 
@@ -409,8 +461,13 @@ int main() {
         input();
         update();   
         Sleep(20);
-    }
-    maxPoints = currentPlayer.points;
-    dialogScreen("GAME OVER!!! THANKS FOR PLAYING!!!");    
+
+        if (gameOver) {            
+            Sleep(1000);
+            dialogScreen("GAME OVER!!! THANKS FOR PLAYING!!! \n Press E to EXIT or Y to PLAY AGAIN...");                       
+        }
+
+    }    
+
     return 0;
 }
