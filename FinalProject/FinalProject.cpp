@@ -11,6 +11,8 @@ Structures: Googled "C++ How create structures" and https://www.w3schools.com/cp
 Key press: Googled "C++ how to auto collect keyboard commands" https://coderslegacy.com/c/detect-key-presses-cpp/
 Ansi colors: Googled "C++ how to give color in the cout" https://stackoverflow.com/questions/4053837/colorizing-text-in-the-console-with-c
 
+Help with C++ code: https://stackoverflow.com/questions
+
 */
 
 #include <iostream>
@@ -36,6 +38,7 @@ using namespace std;
 const int width = 30;
 const int height = 20;
 char screen[height][width];
+bool firstTime = true;
 
 //gaming components
 struct Bullet {
@@ -121,6 +124,7 @@ static void printSpaceships() {
         cout << x << ". " << ship.printingType << " - " << ship.name << endl;
         x++;
     }
+    cout << x << ". CREATE YOUR OWN SPACESHIP" << endl;
 }
 
 //END - spacehisps controlle
@@ -156,17 +160,35 @@ static void playerRegistration() {
     cout << ".";
     Sleep(sleepTime);
     cout << endl << "What is your name DEFENDER:" << endl;
-    cin.clear();    
+    
+    if (!firstTime) {
+        cin.ignore();
+        cin.clear();
+    }
+    else {
+        firstTime = false;
+    }
     getline(cin, newPlayer.name);
+ 
     cout << endl << endl << "LET's FIGHT " << newPlayer.name << "!!!!" << endl << endl;
     Sleep(sleepTime);
-    cout << "Now pick you SPACESHIP:" << endl << endl;
+    cout << "Now pick your SPACESHIP (Type the number and then ENTER):" << endl << endl;
     int spacePick = 0;
     do {
         printSpaceships();
         cin >> spacePick;
-        if (!(spacePick >= 0 && spacePick <= spaceships.size())) {
+        if (!(spacePick >= 0 && spacePick <= spaceships.size() + 1)) {
             cout << endl << "COME ON FIGHTER!!! Pick a better SPACESHIP:" << endl << endl;
+        }
+        if (spacePick == spaceships.size() + 1) {
+            Spaceship newSpaceship;
+            cout << "Type your Spaceship name:" << endl;
+            cin.ignore();
+            cin.clear();
+            getline(cin, newSpaceship.name);
+            cout << "Type your Spaceshipr character:" << "";
+            cin >> newSpaceship.printingType;
+            spaceships.push_back(newSpaceship);
         }
     } while (!(spacePick >= 0 && spacePick <= spaceships.size()));
 
@@ -308,7 +330,7 @@ static void draw() {
     //print movement
     cout << ANSI_COLOR_CYAN;
     cout << "A MOVE LEFT |";
-    cout << "B MOVE RIGHT|";
+    cout << "D MOVE RIGHT|";
     cout << "SPACE TO SHOOT | DO NOT DIE!!!" << endl << endl;    
 
     cout << "|TOP SCORE | " << topScore << endl;
