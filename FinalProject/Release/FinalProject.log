@@ -1,13 +1,13 @@
 ﻿  FinalProject.cpp
-C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(178,43): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(191,44): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(286,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
-C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(287,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(180,43): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(193,44): warning C4018: '<=': signed/unsigned mismatch
 C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(288,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
 C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(289,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
 C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(290,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(291,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
+C:\Users\phkmo\source\repos\spaceInvaders\FinalProject\FinalProject.cpp(292,38): warning C4566: character represented by universal-character-name '\u2588' cannot be represented in the current code page (1252)
   Generating code
-  3 of 448 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
+  0 of 448 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
